@@ -3,11 +3,29 @@ import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
 import Features from "./Features";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const HomeClient = ({ email }: { email: string }) => {
+  const router = useRouter();
   const handleLogin = () => {
     window.location.href = "/api/auth/login";
   };
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.get("/api/auth/logout");
+      if (res.status === 200) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  const navigateToDashboard = () => {
+    router.push("/dashboard");
+  }
 
   const profile = email ? email[0].toUpperCase() : "";
   const [open, setOpen] = useState(false);
@@ -26,16 +44,19 @@ const HomeClient = ({ email }: { email: string }) => {
   const features = [
     {
       name: "Easy Integration",
-      description: "Integrate our AI chatbot into your website with just a few lines of code. No technical expertise required.",
+      description:
+        "Integrate our AI chatbot into your website with just a few lines of code. No technical expertise required.",
     },
     {
       name: "Admin Controlled",
-      description: "Have full control over your AI chatbot's behavior and responses with our intuitive admin panel.",
+      description:
+        "Have full control over your AI chatbot's behavior and responses with our intuitive admin panel.",
     },
     {
       name: "Always Online",
-      description: "Our AI chatbot is available 24/7 to assist your customers, ensuring they always get the help they need.",
-    }
+      description:
+        "Our AI chatbot is available 24/7 to assist your customers, ensuring they always get the help they need.",
+    },
   ];
 
   return (
@@ -67,10 +88,16 @@ const HomeClient = ({ email }: { email: string }) => {
                     exit={{ opacity: 0, y: -6 }}
                     className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl border border-zinc-200 overflow-hidden"
                   >
-                    <button className="w-full text-left px-4 py-3 text-sm hover:bg-zinc-200">
+                    <button 
+                    className="w-full text-left px-4 py-3 text-sm hover:bg-zinc-200"
+                    onClick={navigateToDashboard}
+                    >
                       Dashboard
                     </button>
-                    <button className="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-zinc-200">
+                    <button
+                      className="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-zinc-200"
+                      onClick={handleLogout}
+                    >
                       Logout
                     </button>
                   </motion.div>
@@ -109,7 +136,7 @@ const HomeClient = ({ email }: { email: string }) => {
             </p>
             <div className="flex mt-10 gap-4">
               {email ? (
-                <button className="px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60">
+                <button className="px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60" onClick={navigateToDashboard}>
                   Go to Dashboard
                 </button>
               ) : (
