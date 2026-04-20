@@ -4,8 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { ownerId, businessName, supportEmail, knowledgeBase } =
-      await request.json();
+    const { ownerId } = await request.json();
     if (!ownerId) {
       return NextResponse.json(
         { message: "Missing required fields" },

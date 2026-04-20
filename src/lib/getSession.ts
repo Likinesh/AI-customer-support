@@ -9,10 +9,11 @@ export async function getSession() {
     return null;
   }
   try {
-    const res: any = await scalekit.validateToken(token!);
+    const res = await scalekit.validateToken(token!) as { sub: string };
     const user = await scalekit.user.getUser(res.sub);
     return user;
   } catch (error) {
     console.error("Error Message:", error);
+    return null;
   }
 }

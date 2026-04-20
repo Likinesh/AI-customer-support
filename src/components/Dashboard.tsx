@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { set } from "mongoose";
 
 const Dashboard = ({ ownerId }: { ownerId: string }) => {
   const router = useRouter();
@@ -44,6 +43,7 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
       // Fetch existing settings for the owner
       const fetchDetails = async () => {
         try {
+          setLoading(true);
           const res = await axios.post("/api/settings/get", { ownerId });
           if (res.status === 200 && res.data) {
             setBusinessName(res.data.businessName);
@@ -52,6 +52,8 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
           }
         } catch (error) {
           console.error("Error fetching settings:", error);
+        } finally {
+          setLoading(false);
         }
       };
       fetchDetails();
@@ -75,7 +77,10 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
             Support <span className="text-zinc-400">AI</span>
           </div>
 
-          <button className="px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition">
+          <button 
+          className="px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition"
+          onClick={() => router.push("/embed")}
+          >
             Embed Chatbot
           </button>
         </div>
@@ -124,17 +129,7 @@ const Dashboard = ({ ownerId }: { ownerId: string }) => {
                 value={knowledgeBase}
                 onChange={(e) => setKnowledgeBase(e.target.value)}
                 className="w-full h-54 rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80"
-              />
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-lg font-medium mb-4">Knowledge Base</h1>
-            <p className="text-sm text-zinc-500 mb-4">Add FAQs, policies, delivery info, refunds, etc.</p>
-            <div className="space-y-4">
-              <textarea
-                className="w-full h-54 rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80"
-                placeholder={`Example:\n\nRefund Policy: 7 days return available \n\nDelivery Time: 3-5 business days \n\nCash on Delivery available\n\nSupport Hours: 9am - 6pm (Mon-Fri)`}
+                placeholder={`Example:\nRefund Policy: 7 days return available \nDelivery Time: 3-5 business days \nCash on Delivery available\nSupport Hours: 9am - 6pm (Mon-Fri)`}
                 rows={4}
               />
             </div>

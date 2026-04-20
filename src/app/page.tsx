@@ -5,7 +5,7 @@ export default async function Home() {
   const user = await getSession();
   return (
     <>
-      <HomeClient email={user?.user?.email!}/>
+      <HomeClient email={user?.user?.email ?? ""}/>
     </>
   );
 }

@@ -6,7 +6,7 @@ const DashboardPage = async () => {
   const session = await getSession();
   return (
     <>
-    <Dashboard ownerId={session?.user?.id!}/>
+    <Dashboard ownerId={session?.user?.id ?? ""}/>
     </>
   )
 }
