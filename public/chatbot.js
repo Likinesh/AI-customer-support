@@ -1,8 +1,7 @@
 (function () {
   const scriptTag = document.currentScript;
   const ownerId = scriptTag.getAttribute("data-owner-id");
-  const baseUrl = scriptTag.src.replace("/chatbot.js", "");
-  const api_URL = baseUrl + "/api/chat";
+  const api_URL = "https://ai-customer-support-seven-alpha.vercel.app/api/chat";
 
   if (!ownerId) {
     console.error(
