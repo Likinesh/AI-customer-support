@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NexAssist — Intelligent Support for Modern Businesses",
+  title: "NexAssist - Intelligent Support for Modern Businesses",
   description: "Deploy a smart AI support agent on your website in minutes. Train it on your business, embed it anywhere, and let it handle customer queries 24/7.",
 };
 
