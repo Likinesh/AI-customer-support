@@ -5,10 +5,13 @@ import Footer from "./Footer";
 import Features from "./Features";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { ThemeToggle, useTheme } from "./ThemeProvider";
 
 const HomeClient = ({ email }: { email: string }) => {
   const router = useRouter();
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
+
   const handleLogin = () => {
     setLoading(true);
     window.location.href = "/api/auth/login";
@@ -27,7 +30,7 @@ const HomeClient = ({ email }: { email: string }) => {
 
   const navigateToDashboard = () => {
     router.push("/dashboard");
-  }
+  };
 
   const profile = email ? email[0].toUpperCase() : "";
   const [open, setOpen] = useState(false);
@@ -45,156 +48,193 @@ const HomeClient = ({ email }: { email: string }) => {
 
   const features = [
     {
-      name: "Easy Integration",
+      name: "One-Line Setup",
       description:
-        "Integrate our AI chatbot into your website with just a few lines of code. No technical expertise required.",
+        "Add NexAssist to any website with a single script tag. No frameworks, no backend work — just paste and go.",
     },
     {
-      name: "Admin Controlled",
+      name: "Knowledge-Driven Replies",
       description:
-        "Have full control over your AI chatbot's behavior and responses with our intuitive admin panel.",
+        "Train the assistant with your own FAQs, policies, and product info. It answers only from what you provide — no hallucinations.",
     },
     {
-      name: "Always Online",
+      name: "Always Available",
       description:
-        "Our AI chatbot is available 24/7 to assist your customers, ensuring they always get the help they need.",
+        "Your AI agent works around the clock, handling customer queries instantly so your team can focus on what matters.",
     },
   ];
 
+  const isDark = theme === "dark";
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-white to-zinc-50 text-zinc-900 overflow-x-hidden">
+    <div
+      style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text-primary)" }}
+      className="overflow-x-hidden"
+    >
       {/* Navbar */}
       <motion.div
         initial={{ y: -50 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed left-0 top-0 z-50 w-full bg-white/70 backdrop-blur-xl border-b border-zinc-200"
+        style={{
+          background: "var(--nav-bg)",
+          borderBottom: "1px solid var(--border)",
+          backdropFilter: "blur(20px)",
+        }}
+        className="fixed left-0 top-0 z-50 w-full"
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="text-lg font-semibold tracking-normal">
-            Support <span className="text-zinc-400">AI</span>
+            Nex<span style={{ color: "var(--text-muted)" }}>Assist</span>
           </div>
-          {email ? (
-            <div className="relative" ref={popupRef}>
+
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {email ? (
+              <div className="relative" ref={popupRef}>
+                <button
+                  style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff" }}
+                  className="w-10 h-10 rounded-full flex items-center justify-center font-semibold hover:scale-105 transition"
+                  onClick={() => setOpen(!open)}
+                >
+                  {profile}
+                </button>
+                <AnimatePresence>
+                  {open && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      style={{
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        color: "var(--text-primary)",
+                      }}
+                      className="absolute right-0 mt-3 w-44 rounded-xl shadow-xl overflow-hidden"
+                    >
+                      <button
+                        style={{ color: "var(--text-primary)" }}
+                        className="w-full text-left px-4 py-3 text-sm hover:opacity-70 transition"
+                        onClick={navigateToDashboard}
+                      >
+                        Dashboard
+                      </button>
+                      <button
+                        className="w-full text-left block px-4 py-3 text-sm text-red-500 hover:opacity-70 transition"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
               <button
-                className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-semibold hover:scale-105 transition"
-                onClick={() => setOpen(!open)}
+                style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff" }}
+                className="px-5 py-2 rounded-full text-sm font-medium transition disabled:opacity-60 flex items-center gap-2"
+                onClick={handleLogin}
+                disabled={loading}
               >
-                {profile}
+                {loading ? "Loading..." : "Get Started"}
               </button>
-              <AnimatePresence>
-                {open && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl border border-zinc-200 overflow-hidden"
-                  >
-                    <button 
-                    className="w-full text-left px-4 py-3 text-sm hover:bg-zinc-200"
-                    onClick={navigateToDashboard}
-                    >
-                      Dashboard
-                    </button>
-                    <button
-                      className="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-zinc-200"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ) : (
-            <button
-              className="px-5 py-2 rounded-full bg-black text-white text-sm font-medium hover:bg-zinc-800 transition disabled:opacity-60 flex items-center gap-2"
-              onClick={handleLogin}
-              disabled={loading}
-            >
-              {loading?"Loading...":"Login"}
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </motion.div>
 
       {/* Hero section */}
       <section className="pt-36 pb-28 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          {/* Left */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className=""
           >
             <h1 className="text-4xl md:text-5xl font-semibold leading-tight">
-              AI Customer Support
+              Your AI support agent,
               <br />
-              Built for modern websites
+              ready in minutes.
             </h1>
-            <p className="mt-6 text-lg text-zinc-600 max-w-xl">
-              Add a powerful AI Chatbot to your website in minutes. Let your
-              customers get instant answers using your own business knowledge.
+            <p className="mt-6 text-lg max-w-xl" style={{ color: "var(--text-secondary)" }}>
+              NexAssist lets you deploy a fully trained AI assistant on any
+              website. Just describe your business — it handles the rest.
             </p>
             <div className="flex mt-10 gap-4">
               {email ? (
-                <button className="px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60" onClick={navigateToDashboard}>
+                <button
+                  style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff" }}
+                  className="px-7 py-3 rounded-xl font-medium transition"
+                  onClick={navigateToDashboard}
+                >
                   Go to Dashboard
                 </button>
               ) : (
                 <button
-                  className="px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60"
+                  style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff" }}
+                  className="px-7 py-3 rounded-xl font-medium transition"
                   onClick={handleLogin}
                 >
-                  Get Started
+                  Start for Free
                 </button>
               )}
               <a
-                className="px-7 py-3 rounded-xl border border-zinc-500 text-zinc-900 hover:bg-zinc-100 transition"
+                style={{ border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                className="px-7 py-3 rounded-xl transition hover:opacity-70"
                 href="#feature"
               >
-                Learn More
+                See How It Works
               </a>
             </div>
           </motion.div>
 
-          {/* Right */}
+          {/* Chat preview */}
           <motion.div
             className="relative"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <div className="rounded-2xl bg-white shadow-2xl border border-zinc-200 p-6">
-              <div className="text-sm text-zinc-500 mb-5">
+            <div
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                boxShadow: "var(--shadow)",
+              }}
+              className="rounded-2xl p-6"
+            >
+              <div className="text-sm mb-5" style={{ color: "var(--text-secondary)" }}>
                 Live Chat Preview
               </div>
               <div className="space-y-3">
-                <div className="bg-black text-white rounded-lg px-4 py-2 text-sm ml-auto w-fit">
-                  Do you offer cash on delivery?
+                <div
+                  style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff" }}
+                  className="rounded-lg px-4 py-2 text-sm ml-auto w-fit"
+                >
+                  What are your support hours?
                 </div>
-                <div className="bg-zinc-100 rounded-lg px-4 py-2 text-sm w-fit">
-                  Yes, COD is available.
+                <div
+                  style={{ background: "var(--bg-secondary)", color: "var(--text-primary)" }}
+                  className="rounded-lg px-4 py-2 text-sm w-fit"
+                >
+                  We&apos;re available Mon–Fri, 9 am to 6 pm.
                 </div>
               </div>
 
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 3 }}
-                className="absolute -bottom-6 -right-4 w-14 h-14 rounded-full bg-black text-black flex items-center justify-center shadow-xl"
+                style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff" }}
+                className="absolute -bottom-6 -right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-xl text-xl"
               >
-                🗨️
+                💬
               </motion.div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Features */}
       <Features features={features} />
-
-      {/* Footer */}
       <Footer />
     </div>
   );

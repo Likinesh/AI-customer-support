@@ -2,16 +2,18 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import { motion } from "motion/react";
+import { ThemeToggle, useTheme } from "./ThemeProvider";
 
 const EmbedClient = ({ ownerId }: { ownerId: string }) => {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [copied, setCopied] = React.useState(false);
-  const embedCode = `
-    <script 
-        src="${process.env.NEXT_PUBLIC_APP_URL}/chatbot.js" 
-        data-owner-id="${ownerId}">
-    </script>
-    `.trim();
+
+  const embedCode = `<script 
+    src="${process.env.NEXT_PUBLIC_APP_URL}/chatbot.js" 
+    data-owner-id="${ownerId}">
+</script>`.trim();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(embedCode);
@@ -20,103 +22,160 @@ const EmbedClient = ({ ownerId }: { ownerId: string }) => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
-      {/* Navbar — FIX 1: Added "flex" class */}
-      <div className="sticky top-0 z-40 bg-white border-b border-zinc-200">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16 text-lg font-medium">
+    <div style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text-primary)" }}>
+      {/* Navbar */}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+          background: "var(--nav-bg)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <div
             className="text-lg font-semibold cursor-pointer"
             onClick={() => router.push("/")}
           >
-            Support <span className="text-zinc-400">AI</span>
+            Nex<span style={{ color: "var(--text-muted)" }}>Assist</span>
           </div>
-          <button
-            className="px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition"
-            onClick={() => router.push("/dashboard")}
-          >
-            Back to Dashboard
-          </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <button
+              style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                border: "1px solid var(--border)",
+                background: "transparent",
+                color: "var(--text-primary)",
+                cursor: "pointer",
+                fontSize: "14px",
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              onClick={() => router.push("/dashboard")}
+            >
+              Back to Dashboard
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="flex justify-center px-4 py-14">
         <motion.div
-          className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-10"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            boxShadow: "var(--shadow)",
+            borderRadius: "16px",
+            padding: "40px",
+            width: "100%",
+            maxWidth: "896px",
+          }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-2xl font-bold">Embed Chatbot</h1>
+          <h1 className="text-2xl font-bold">Install Your Agent</h1>
 
-          {/* FIX 2: Replaced <p> with <div> to allow block children */}
-          <div className="text-zinc-500 mt-1">
-            Copy and paste the following code before <code>&lt;/body&gt;</code>:
+          <p className="mt-1 mb-4" style={{ color: "var(--text-secondary)" }}>
+            Paste this snippet before the <code style={{ background: "var(--bg-secondary)", padding: "1px 5px", borderRadius: "4px" }}>&lt;/body&gt;</code> tag on any page where you want NexAssist to appear:
+          </p>
 
-            {/* FIX 3: Moved copy button inside the relative container */}
-            <div className="relative bg-zinc-900 rounded-xl mt-4 p-4 text-sm font-mono mb-10">
-              <pre className="overflow-x-auto text-white">{embedCode}</pre>
-              <button
-                className="absolute top-3 right-3 bg-white text-zinc-900 text-xs font-medium px-3 py-1 rounded-lg border border-zinc-300 hover:bg-zinc-100 transition"
-                onClick={copyToClipboard}
-              >
-                {copied ? "Copied!" : "Copy"}
-              </button>
-            </div>
+          <div
+            style={{ position: "relative", background: "#1a1a2e", borderRadius: "12px", padding: "16px", marginBottom: "24px" }}
+          >
+            <pre style={{ overflowX: "auto", color: "#e2e8f0", fontSize: "13px", margin: 0 }}>{embedCode}</pre>
+            <button
+              style={{
+                position: "absolute",
+                top: "12px",
+                right: "12px",
+                background: "var(--surface)",
+                color: "var(--text-primary)",
+                border: "1px solid var(--border)",
+                borderRadius: "6px",
+                padding: "4px 12px",
+                fontSize: "12px",
+                fontWeight: 500,
+                cursor: "pointer",
+              }}
+              onClick={copyToClipboard}
+            >
+              {copied ? "Copied!" : "Copy"}
+            </button>
           </div>
 
-          <ol className="list-decimal list-inside text-zinc-500 text-sm space-y-2">
-            <li>Copy the code above.</li>
-            <li>
-              Paste it before the closing <code>&lt;/body&gt;</code> tag in your
-              HTML file.
-            </li>
-            <li>Save and deploy your changes.</li>
+          <ol style={{ color: "var(--text-secondary)", fontSize: "14px", paddingLeft: "20px", marginBottom: "48px" }} className="space-y-2 list-decimal">
+            <li>Copy the snippet above.</li>
+            <li>Open your website&apos;s HTML and paste it just before <code style={{ background: "var(--bg-secondary)", padding: "1px 5px", borderRadius: "4px" }}>&lt;/body&gt;</code>.</li>
+            <li>Save and publish your changes — the agent is live instantly.</li>
           </ol>
 
-          <div className="mt-14">
-            <h1 className="text-lg font-medium mb-2">Live Preview</h1>
-            <p className="text-zinc-500 text-sm mb-6">
-              This is a preview of how your embedded chatbot will appear on your
-              website.
+          <div>
+            <h2 className="text-lg font-medium mb-2">Preview</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+              This is how your NexAssist agent will look on your website.
             </p>
 
-            <div className="rounded-xl border border-zinc-300 bg-white shadow-md overflow-hidden">
-              <div className="rounded-xl border border-zinc-300 bg-white shadow-md overflow-hidden">
-                <div className="flex items-center gap-2 px-4 h-9 bg-zinc-100 border-b border-zinc-200">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                  <span className="ml-4 text-xs text-zinc-500">
-                    Your-website.com
-                  </span>
-                </div>
+            <div style={{ borderRadius: "12px", border: "1px solid var(--border)", overflow: "hidden" }}>
+              {/* Browser chrome */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 16px",
+                  background: "var(--bg-secondary)",
+                  borderBottom: "1px solid var(--border)",
+                }}
+              >
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#f87171", display: "inline-block" }} />
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#fbbf24", display: "inline-block" }} />
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
+                <span style={{ marginLeft: "16px", fontSize: "12px", color: "var(--text-muted)" }}>your-website.com</span>
+              </div>
 
-                <div className="relative h-64 sm:h-72 p-6 text-zinc-400 text-sm">
-                  Your website goes here...
-                  <div className="absolute bottom-24 right-6 w-64 bg-white rounded-xl shadow-xl border border-zinc-200 overflow-hidden">
-                    <div className="bg-black text-white text-xs px-3 py-2 flex justify-between items-center">
-                      <span>Customer Support</span>
-                      <span>✕</span>
+              {/* Page body */}
+              <div style={{ position: "relative", height: "280px", padding: "24px", background: "var(--bg)", color: "var(--text-muted)", fontSize: "14px" }}>
+                Your website content goes here...
+
+                {/* Widget preview */}
+                <div style={{
+                  position: "absolute", bottom: "90px", right: "24px",
+                  width: "240px", background: "var(--surface)", borderRadius: "12px",
+                  boxShadow: "0 10px 40px rgba(0,0,0,0.2)", border: "1px solid var(--border)", overflow: "hidden"
+                }}>
+                  <div style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff", fontSize: "12px", padding: "8px 12px", display: "flex", justifyContent: "space-between" }}>
+                    <span>Support Agent</span>
+                    <span>✕</span>
+                  </div>
+                  <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px", background: "var(--bg-secondary)" }}>
+                    <div style={{ background: "var(--border)", color: "var(--text-primary)", fontSize: "12px", padding: "6px 10px", borderRadius: "10px", width: "fit-content" }}>
+                      Hi! How can I assist you today?
                     </div>
-
-                    <div className="p-3 space-y-2 bg-zinc-50">
-                      <div className="bg-zinc-200 text-zinc-800 text-xs px-3 py-2 rounded-2xl w-fit">
-                        Hi! How can I help you today?
-                      </div>
-                      <div className="bg-black text-xs text-white px-3 py-2 rounded-lg ml-auto w-fit">
-                        What is the return policy?
-                      </div>
+                    <div style={{ background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff", fontSize: "12px", padding: "6px 10px", borderRadius: "8px", marginLeft: "auto", width: "fit-content" }}>
+                      What is your return policy?
                     </div>
                   </div>
-
-                  <motion.div
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute bottom-6 right-6 w-16 h-16 bg-black rounded-full flex items-center justify-center text-white text-sm cursor-pointer shadow-2xl"
-                  >
-                    🗨️
-                  </motion.div>
                 </div>
+
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  style={{
+                    position: "absolute", bottom: "24px", right: "24px",
+                    width: "56px", height: "56px", borderRadius: "50%",
+                    background: isDark ? "#fff" : "#000", color: isDark ? "#000" : "#fff",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "20px", cursor: "pointer", boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  💬
+                </motion.div>
               </div>
             </div>
           </div>

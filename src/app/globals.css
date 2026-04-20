@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+/* ── Theme variables ── */
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f9fafb;
+  --surface: #ffffff;
+  --border: #e4e4e7;
+  --text-primary: #09090b;
+  --text-secondary: #71717a;
+  --text-muted: #a1a1aa;
+  --nav-bg: rgba(255, 255, 255, 0.75);
+  --input-border: #d4d4d8;
+  --input-bg: #ffffff;
+  --shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  --bg: #09090b;
+  --bg-secondary: #18181b;
+  --surface: #18181b;
+  --border: #27272a;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --nav-bg: rgba(9, 9, 11, 0.75);
+  --input-border: #3f3f46;
+  --input-bg: #27272a;
+  --shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Apply variables globally ── */
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}

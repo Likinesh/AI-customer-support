@@ -1,7 +1,8 @@
 (function () {
-  const api_URL = "http://localhost:3000/api/chat";
   const scriptTag = document.currentScript;
   const ownerId = scriptTag.getAttribute("data-owner-id");
+  const baseUrl = scriptTag.src.replace("/chatbot.js", "");
+  const api_URL = baseUrl + "/api/chat";
 
   if (!ownerId) {
     console.error(
@@ -56,7 +57,7 @@
         align-items: center;
         justify-content: space-between;
     ">
-        <span>Customer Support</span>
+        <span>Support Agent</span>
         <span id="chat-close" style="cursor: pointer; font-size: 16px;">✕</span>
     </div>
     <div
